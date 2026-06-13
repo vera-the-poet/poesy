@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Стихи Веры</title>
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --card: #ffffff;
+            --text: #2c1810;
+            --accent: #8b4513;
+            --border: #e8d5c4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: Georgia, 'Times New Roman', serif;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--accent);
+            font-weight: normal;
+        }
+
+        .subtitle {
+            color: #8b7355;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        .post {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 15px rgba(139, 69, 19, 0.05);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .post-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .post-date {
+            color: #8b7355;
+            font-size: 0.9rem;
+            font-style: italic;
+            text-align: right;
+            border-top: 1px solid var(--border);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .telegram-link {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            margin-top: 1rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .post {
+                padding: 1.5rem;
+            }
+
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>vera the poet</h1>
+            <p class="subtitle">Поэзия из Telegram-канала</p>
+            <a href="https://t.me/vera_poetry_channel" class="telegram-link">Открыть канал</a>
+        </header>
+        <div id="last-update" style="text-align:center;color:#8b7355;margin-bottom:1rem;"></div>
+        <main id="posts"></main>
+    </div>
+    <script>
+        async function loadPosts() {
+            try {
+                const response = await fetch('posts.json?t=' + new Date().getTime());
+                const posts = await response.json();
+                const container = document.getElementById('posts');
+                if (posts.length === 0) {
+                    container.innerHTML = '<p style="text-align:center;color:#8b7355;">Пока нет стихов...</p>';
+                    return;
+                }
+                container.innerHTML = posts.reverse().map(post => `
+                    <article class="post">
+                        <div class="post-text">${escapeHtml(post.text)}</div>
+                        <div class="post-date">${formatDate(post.date)}</div>
+                    </article>
+                `).join('');
+                showLastUpdate();
+            } catch (error) {
+                document.getElementById('posts').innerHTML = '<p style="text-align:center;color:#8b7355;">Загрузка...</p>';
+            }
+        }
+
+        function showLastUpdate() {
+            fetch('https://api.github.com/repos/vera-the-poet/poesy/commits?path=posts.json&page=1&per_page=1')
+                .then(r => r.json())
+                .then(data => {
+                    const date = new Date(data[0].commit.committer.date);
+                    document.getElementById('last-update').innerHTML = '🕐 Последнее обновление: ' + date.toLocaleString('ru-RU');
+                })
+                .catch(() => { });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('ru-RU', {
+                day: 'numeric', month: 'long', year: 'numeric',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.addEventListener('DOMContentLoaded', loadPosts);
+    </script>
+</body>
+
+</html>
