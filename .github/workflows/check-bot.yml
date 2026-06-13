@@ -1,0 +1,23 @@
+name: Check Bot
+
+on:
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: pip install requests
+    
+    - name: Check bot updates
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+      run: python check_raw.py
