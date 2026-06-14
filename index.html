@@ -3,8 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" type="image/svg+xml" href="logo.svg">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Стихи Веры</title>
+    <title>vera_the_poet</title>
     <style>
         :root {
             --bg: #faf8f5;
@@ -60,6 +61,27 @@
             margin-bottom: 2rem;
             box-shadow: 0 2px 15px rgba(139, 69, 19, 0.05);
             animation: fadeIn 0.5s ease-out;
+            transition: background-color 0.5s ease;
+        }
+
+        .post:nth-child(5n+1) {
+            background-color: #ffebeb;
+        }
+
+        .post:nth-child(5n+2) {
+            background-color: #ebebff;
+        }
+
+        .post:nth-child(5n+3) {
+            background-color: #ebffeb;
+        }
+
+        .post:nth-child(5n+4) {
+            background-color: #ffebff;
+        }
+
+        .post:nth-child(5n+5) {
+            background-color: #ffffeb;
         }
 
         .post-text {

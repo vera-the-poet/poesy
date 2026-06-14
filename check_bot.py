@@ -1,5 +1,5 @@
 import json, os, requests
-from datetime import datetime
+from datetime import datetime, timezone
 
 token = os.environ['BOT_TOKEN']
 CHANNEL_ID = os.environ['CHANNEL_ID']
@@ -34,7 +34,7 @@ def save_posts():
                         'message_id': msg['message_id'],
                         'chat_id': msg['chat']['id'],
                         'text': msg['text'],
-                        'date': datetime.fromtimestamp(msg['date']).isoformat()
+                        'date': datetime.fromtimestamp(msg['date'], tz=timezone.utc).isoformat()
                     })
                     existing_keys.add(key)
                     new_posts += 1
