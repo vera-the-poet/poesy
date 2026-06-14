@@ -2,6 +2,8 @@ import json, os, requests
 from datetime import datetime
 
 token = os.environ['BOT_TOKEN']
+CHANNEL_ID = os.environ['CHANNEL_ID']
+GITHUB_TOKEN = os.environ.get('GH_TOKEN', '')
 
 def save_posts():
     try:
@@ -20,12 +22,12 @@ def save_posts():
     if data['ok']:
         for update in data['result']:
             msg = None
-            if 'message' in update:
-                msg = update['message']
-            elif 'channel_post' in update:
+            if 'channel_post' in update:
                 msg = update['channel_post']
+            elif 'message' in update:
+                msg = update['message']
             
-            if msg and 'text' in msg:
+            if msg and 'text' in msg and str(msg['chat']['id']) == CHANNEL_ID:
                 key = (msg['message_id'], msg['chat']['id'])
                 if key not in existing_keys:
                     posts.append({
@@ -42,7 +44,29 @@ def save_posts():
     
     return new_posts, len(posts)
 
+def trigger_deploy():
+    if not GITHUB_TOKEN:
+        return
+    url = "https://api.github.com/repos/vera-the-poet/poesy/pages/builds"
+    headers = {
+        "Authorization": f"token {GITHUB_TOKEN}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    try:
+        r = requests.post(url, headers=headers)
+        if r.status_code == 201:
+            print("🚀 Деплой запущен")
+        else:
+            print(f"⚠️ Ошибка деплоя: {r.status_code}")
+    except Exception as e:
+        print(f"❌ Ошибка: {e}")
+
 # main
-print("📥 Проверяю посты...")
+print("📥 Проверяю посты из канала...")
 new, total = save_posts()
 print(f"✅ Всего: {total}, 🆕 Новых: {new}")
+
+if new > 0:
+    trigger_deploy()
+else:
+    print("💤 Нет новых постов")

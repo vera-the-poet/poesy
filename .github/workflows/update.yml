@@ -2,7 +2,7 @@ name: Update Poetry
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 permissions:
@@ -24,10 +24,12 @@ jobs:
     - name: Fetch posts
       env:
         BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        CHANNEL_ID: ${{ secrets.CHANNEL_ID }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
       run: python check_bot.py
     - name: Commit and push
       run: |
         git config user.email "bot@github.com"
         git config user.name "Poetry Bot"
         git add posts.json
-        git diff --quiet && git diff --staged --quiet || (git commit -m "📝 Обновление стихов" && git push)
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Обновление контента" && git push)
