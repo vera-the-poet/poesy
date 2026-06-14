@@ -123,10 +123,33 @@
             <p class="subtitle">Поэзия из Telegram-канала</p>
             <a href="https://t.me/vera_poetry_channel" class="telegram-link">Открыть канал</a>
         </header>
-        <div id="last-update" style="text-align:center;color:#8b7355;margin-bottom:1rem;"></div>
+        <div id="last-update" style="text-align:center;color:#8b7355;margin-bottom:1rem;"><button id="update-btn"
+                style="display:block;margin:0 auto 1rem;padding:0.6rem 1.5rem;background:var(--accent);color:white;border:none;border-radius:25px;cursor:pointer;font-family:Georgia,serif;">
+                Обновить контент
+            </button></div>
         <main id="posts"></main>
     </div>
     <script>
+        document.getElementById('update-btn').addEventListener('click', async () => {
+            const btn = document.getElementById('update-btn');
+            btn.disabled = true;
+            btn.textContent = '⏳ Запускаем...';
+            try {
+                const res = await fetch('https://poesy.vera-the-poet.workers.dev', { method: 'POST' });
+                const data = await res.json();
+                if (data.ok) {
+                    btn.textContent = '✅ Запущено';
+                    setTimeout(() => { btn.textContent = 'Обновить контент'; btn.disabled = false; }, 5000);
+                } else {
+                    btn.textContent = '❌ Ошибка';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                btn.textContent = '❌ Ошибка сети';
+                btn.disabled = false;
+            }
+        });
+
         async function loadPosts() {
             try {
                 const response = await fetch('posts.json?t=' + new Date().getTime());
