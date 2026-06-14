@@ -141,7 +141,7 @@
             btn.disabled = true;
             btn.textContent = '⏳ Запускаем...';
             try {
-                const res = await fetch('https://poesy.vera-the-poet.workers.dev', { method: 'POST' });
+                const res = await fetch('https://poesy.iablonevicvet.workers.dev', { method: 'POST' });
                 const data = await res.json();
                 if (data.ok) {
                     btn.textContent = '✅ Запущено';
