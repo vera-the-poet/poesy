@@ -14,28 +14,27 @@ def save_posts():
     r = requests.get(url)
     data = r.json()
 
-    existing_ids = {p['id'] for p in posts}
+    existing_keys = {(p['message_id'], p['chat_id']) for p in posts}
     new_posts = 0
 
     if data['ok']:
         for update in data['result']:
+            msg = None
             if 'message' in update:
                 msg = update['message']
-                if 'text' in msg and msg['message_id'] not in existing_ids:
-                    posts.append({
-                        'id': msg['message_id'],
-                        'text': msg['text'],
-                        'date': datetime.fromtimestamp(msg['date']).isoformat()
-                    })
-                    new_posts += 1
             elif 'channel_post' in update:
                 msg = update['channel_post']
-                if 'text' in msg and msg['message_id'] not in existing_ids:
+            
+            if msg and 'text' in msg:
+                key = (msg['message_id'], msg['chat']['id'])
+                if key not in existing_keys:
                     posts.append({
-                        'id': msg['message_id'],
+                        'message_id': msg['message_id'],
+                        'chat_id': msg['chat']['id'],
                         'text': msg['text'],
                         'date': datetime.fromtimestamp(msg['date']).isoformat()
                     })
+                    existing_keys.add(key)
                     new_posts += 1
 
     with open('posts.json', 'w', encoding='utf-8') as f:
