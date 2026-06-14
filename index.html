@@ -27,6 +27,10 @@
             min-height: 100vh;
         }
 
+        #update-btn {
+            display: none;
+        }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -124,7 +128,7 @@
             <p class="subtitle">Поэзия из Telegram-канала</p>
             <!-- <a href="https://t.me/vera_poetry_channel" class="telegram-link">Открыть канал</a> -->
         </header>
-        
+
         <div id="last-update" style="text-align:center;color:#8b7355;margin-bottom:1rem;"></div>
 
         <main id="posts"></main>
@@ -171,6 +175,8 @@
                         <div class="post-date">${formatDate(post.date)}</div>
                     </article>
                 `).join('');
+
+                document.getElementById('update-btn').style.display = 'block';
                 showLastUpdate();
             } catch (error) {
                 document.getElementById('posts').innerHTML = '<p style="text-align:center;color:#8b7355;">Загрузка...</p>';
@@ -190,9 +196,13 @@
         function formatDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('ru-RU', {
-                day: 'numeric', month: 'long', year: 'numeric',
-                hour: '2-digit', minute: '2-digit'
-            });
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'Europe/Moscow'
+            }) + ' (МСК)';
         }
 
         function escapeHtml(text) {
