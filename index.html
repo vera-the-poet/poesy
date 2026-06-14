@@ -122,7 +122,7 @@
         <header>
             <h1>vera the poet</h1>
             <p class="subtitle">Поэзия из Telegram-канала</p>
-            <a href="https://t.me/vera_poetry_channel" class="telegram-link">Открыть канал</a>
+            <!-- <a href="https://t.me/vera_poetry_channel" class="telegram-link">Открыть канал</a> -->
         </header>
         
         <div id="last-update" style="text-align:center;color:#8b7355;margin-bottom:1rem;"></div>
@@ -141,7 +141,7 @@
             btn.disabled = true;
             btn.textContent = '⏳ Запускаем...';
             try {
-                const res = await fetch('https://poesy.iablonevicvet.workers.dev', { method: 'POST' });
+                const res = await fetch('https://poetry-updater.iablonevicvet.workers.dev', { method: 'POST' });
                 const data = await res.json();
                 if (data.ok) {
                     btn.textContent = '✅ Запущено';
