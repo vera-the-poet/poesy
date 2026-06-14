@@ -23,7 +23,7 @@ def process_updates():
     new_posts = 0
     updated_posts = 0
 
-    url = f"https://api.telegram.org/bot{token}/getUpdates"
+    url = f"https://api.telegram.org/bot{token}/getUpdates?allowed_updates=channel_post,edited_channel_post"
     r = requests.get(url)
     data = r.json()
 
@@ -35,6 +35,9 @@ def process_updates():
         msg = None
         if 'channel_post' in update:
             msg = update['channel_post']
+        elif 'edited_channel_post' in update:
+            msg = update['edited_channel_post']
+
         if not msg or 'text' not in msg:
             continue
         if str(msg['chat']['id']) != CHANNEL_ID:
@@ -42,12 +45,11 @@ def process_updates():
 
         key = (msg['chat']['id'], msg['message_id'])
         text = msg['text']
-        date = datetime.fromtimestamp(msg['date'], tz=timezone.utc).isoformat()
+        date = posts_dict[key]['date'] if key in posts_dict else datetime.fromtimestamp(msg['date'], tz=timezone.utc).isoformat()
 
         if key in posts_dict:
-            existing = posts_dict[key]
-            if existing['text'] != text:
-                existing['text'] = text
+            if posts_dict[key]['text'] != text:
+                posts_dict[key]['text'] = text
                 updated_posts += 1
                 print(f"🔄 Обновлён пост {msg['message_id']}")
         else:
