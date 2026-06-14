@@ -110,6 +110,12 @@
             margin-top: 1rem;
         }
 
+        #post-count {
+            font-size: 0.4em;
+            vertical-align: super;
+            color: #b69c7d;
+        }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -142,7 +148,7 @@
     <div class="container">
 
         <header>
-            <h1>VeRa tHe PoEt</h1>
+            <h1>vera the poet <sup id="post-count">0</sup></h1>
             <p class="subtitle">🪶 дыхание строк</p>
             <!-- <a href="https://t.me/vera_poetry_channel" class="telegram-link">Открыть канал</a> -->
         </header>
@@ -152,8 +158,8 @@
         <main id="posts"></main>
 
         <button id="update-btn"
-            style="display:none;margin:0 auto 1rem;padding:10px 12px;background:var(--accent);color:white;border:none;border-radius:30px;cursor:pointer;font-family:Georgia,serif;">
-            ⟳
+            style="display:none;margin:0 auto 1rem;padding:10px 10px;background:var(--accent);color:white;border:none;border-radius:30px;cursor:pointer;font-family:Georgia,serif;font-size:20px;">
+            <p style="filter:hue-rotate(190deg) contrast(1.75)">🔄</p>
         </button>
 
     </div>
@@ -166,8 +172,8 @@
                 const res = await fetch('https://poetry-updater.iablonevicvet.workers.dev', { method: 'POST' });
                 const data = await res.json();
                 if (data.ok) {
-                    btn.textContent = '✅ Запущено';
-                    setTimeout(() => { btn.textContent = 'Обновить контент'; btn.disabled = false; }, 5000);
+                    btn.textContent = '✅';
+                    setTimeout(() => { btn.textContent = 'Ещё раз 🔄'; btn.disabled = false; }, 5000);
                 } else {
                     btn.textContent = '❌ Ошибка';
                     btn.disabled = false;
@@ -195,6 +201,7 @@
                 `).join('');
 
                 document.getElementById('update-btn').style.display = 'block';
+                document.getElementById('post-count').textContent = posts.length;
                 showLastUpdate();
             } catch (error) {
                 document.getElementById('posts').innerHTML = '<p style="text-align:center;color:#8b7355;">Загрузка...</p>';
